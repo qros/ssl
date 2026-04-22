@@ -1,0 +1,20 @@
+---
+domain: "hulst010.nl"
+acme_email: "pc2a@xs4all.nl"
+
+mx1_fqdn: "mx1.{{ domain }}"
+mail_fqdn: "mail.{{ domain }}"
+imap_fqdn: "imap.{{ domain }}"
+smtp_fqdn: "smtp.{{ domain }}"
+
+db_name: "postfixadmin"
+db_user: "postfixadmin"
+db_password: ""  # will be generated later
+
+vmail_uid: 5000
+vmail_gid: 5000
+vmail_home: "/var/vmail"
+
+ssl_cert: "/etc/ssl/acme/{{ mx1_fqdn }}.cert"
+ssl_key: "/etc/ssl/acme/{{ mx1_fqdn }}.key"
+ssl_fullchain: "/etc/ssl/acme/{{ mx1_fqdn }}.fullchain"

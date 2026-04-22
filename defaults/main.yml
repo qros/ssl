@@ -1,0 +1,5 @@
+acmesh_home: /root/.acme.sh
+acmesh_bin: /root/.acme.sh/acme.sh
+
+# Optional: where to run (acme.sh stores state under ~/.acme.sh)
+acmesh_workdir: /root

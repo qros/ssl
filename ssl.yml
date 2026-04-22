@@ -1,0 +1,7 @@
+---
+#- import_playbook: playbooks/00-bootstrap.yml
+- import_playbook: playbooks/10-ssl.yml
+#- import_playbook: playbooks/20-apache.yml
+#- import_playbook: playbooks/25-certbot-apache.yml
+#- import_playbook: playbooks/30-mariadb.yml
+#- import_playbook: playbooks/35-phpmyadmin.yml

@@ -1,0 +1,38 @@
+#!/bin/bash
+# /root/mail-server-vars.sh
+# Mail Server Configuration Variables
+
+#=============================================================================
+# EDIT THESE VALUES FOR YOUR DOMAIN
+#=============================================================================
+export DOMAIN="hulst010.nl"              # Replace with your actual domain
+export ACME_EMAIL="pc2a@xs4all.nl"    # For Let's Encrypt notifications
+
+#=============================================================================
+# Derived Hostnames (automatically generated from DOMAIN)
+#=============================================================================
+export MX1_FQDN="mx1.${DOMAIN}"
+export MAIL_FQDN="mail.${DOMAIN}"
+export IMAP_FQDN="imap.${DOMAIN}"
+export SMTP_FQDN="smtp.${DOMAIN}"
+
+#=============================================================================
+# Database Configuration (passwords added in Part 2)
+#=============================================================================
+export DB_NAME="postfixadmin"
+export DB_USER="postfixadmin"
+export DB_PASSWORD=""  # Will be generated in Part 2
+
+#=============================================================================
+# Virtual Mail User
+#=============================================================================
+export VMAIL_UID=5000
+export VMAIL_GID=5000
+export VMAIL_HOME="/var/vmail"
+
+#=============================================================================
+# SSL/TLS Paths (acme.sh with DNS challenge)
+#=============================================================================
+export SSL_CERT="/etc/ssl/acme/${MX1_FQDN}.cert"
+export SSL_KEY="/etc/ssl/acme/${MX1_FQDN}.key"
+export SSL_FULLCHAIN="/etc/ssl/acme/${MX1_FQDN}.fullchain"
