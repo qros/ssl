@@ -2,7 +2,7 @@
   hosts: vps
   become: true
   vars_files:
-    - ../group_vars/vps.yml
+    - ../group_vars/ssl.yml
 
   roles:
     - ssl

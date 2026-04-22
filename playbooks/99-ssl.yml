@@ -1,0 +1,8 @@
+- name: Mail Server Preparation
+  hosts: vps
+  become: true
+  vars_files:
+    - ../group_vars/ssl.yml
+
+  roles:
+    - ssl-afronden

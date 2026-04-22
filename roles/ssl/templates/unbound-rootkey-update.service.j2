@@ -1,8 +1,0 @@
-[Unit]
-Description=Update Unbound Root Trust Anchor
-After=network-online.target
-
-[Service]
-Type=oneshot
-ExecStart=/usr/sbin/unbound-anchor -a /var/lib/unbound/root.key
-ExecStartPost=/bin/systemctl reload unbound

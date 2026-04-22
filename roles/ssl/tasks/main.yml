@@ -1,0 +1,82 @@
+---
+- name: Install required packages
+  apt:
+    name:
+      - cron
+      - socat
+    state: present
+    update_cache: yes
+
+#- name: Source mail server variables
+#  shell: source /root/mail-server-vars.sh
+#  become: true
+#  environment:
+#    HOME: "/root"  # Ensure it's run as root
+
+- name: Install acme.sh (Let’s Encrypt)
+  shell: curl https://get.acme.sh | sh
+  become: true
+
+- name: Source .bashrc to apply changes
+  shell: . ~/.bashrc
+  become: true
+  environment:
+    HOME: "/root"
+
+- name: Check whether acme.sh account is already registered
+  ansible.builtin.stat:
+    path: "{{ ansible_env.HOME }}/.acme.sh/account.conf"
+  register: acme_account_conf
+
+- name: Set Let's Encrypt as default CA
+  ansible.builtin.command: >
+    /root/.acme.sh/acme.sh --set-default-ca --server letsencrypt
+  environment:
+    HOME: "/root"
+
+- name: Register account with Let's Encrypt
+  ansible.builtin.command: >
+    /root/.acme.sh/acme.sh --register-account -m {{ acme_email }}
+  environment:
+    HOME: "/root"
+##
+##
+
+- name: Controleer of vereiste FQDN-variabelen gezet zijn
+  ansible.builtin.assert:
+    that:
+      - mx1_fqdn is defined
+      - mx1_fqdn | length > 0
+      - mail_fqdn is defined
+      - mail_fqdn | length > 0
+      - imap_fqdn is defined
+      - imap_fqdn | length > 0
+      - smtp_fqdn is defined
+      - smtp_fqdn | length > 0
+    fail_msg: "Zet mx1_fqdn, mail_fqdn, imap_fqdn en smtp_fqdn in group_vars of host_vars."
+
+- name: Start acme.sh issue in manual DNS mode
+  ansible.builtin.command:
+    argv:
+      - "{{ acme_sh_path }}"
+      - --issue
+      - --dns
+      - -d
+      - "{{ mx1_fqdn }}"
+      - -d
+      - "{{ imap_fqdn }}"
+      - -d
+      - "{{ mail_fqdn }}"
+      - -d
+      - "{{ smtp_fqdn }}"
+      - --yes-I-know-dns-manual-mode-enough-go-ahead-please
+  environment:
+    HOME: "{{ acme_home }}"
+  register: acme_issue_result
+  changed_when: true
+  failed_when: >
+    acme_issue_result.rc not in [0, 2, 3]
+
+- name: Toon DNS TXT-records uit acme.sh output
+  ansible.builtin.debug:
+    msg: "{{ acme_issue_result.stdout_lines }}"

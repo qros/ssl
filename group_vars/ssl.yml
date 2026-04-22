@@ -1,0 +1,11 @@
+#
+# ACME variable
+acme_email: "pc2a@xs4all.nl"
+
+mx1_fqdn: "mx1.hulst010.nl"
+mail_fqdn: "mail.hulst010.nl"
+imap_fqdn: "imap.hulst010.nl"
+smtp_fqdn: "smtp.hulst010.nl"
+
+acme_home: "/root"
+acme_sh_path: "/root/.acme.sh/acme.sh"

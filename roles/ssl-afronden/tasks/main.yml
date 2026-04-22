@@ -1,0 +1,64 @@
+- name: Finaliseer acme.sh aanvraag na DNS propagatie
+  ansible.builtin.command:
+    argv:
+      - "{{ acme_sh_path }}"
+      - --renew
+      - -d
+      - "{{ mx1_fqdn }}"
+      - -d
+      - "{{ mail_fqdn }}"
+      - -d
+      - "{{ imap_fqdn }}"
+      - -d
+      - "{{ smtp_fqdn }}"
+      - --yes-I-know-dns-manual-mode-enough-go-ahead-please
+  environment:
+    HOME: "{{ acme_home }}"
+  register: acme_renew_result
+  changed_when: >
+    'Your cert is in' in acme_renew_result.stdout or
+    'Cert success' in acme_renew_result.stdout or
+    acme_renew_result.rc == 0
+
+- name: Maak directory voor certificaten
+  ansible.builtin.file:
+    path: /etc/ssl/acme
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Installeer certificaat via acme.sh
+  ansible.builtin.command:
+    argv:
+      - "{{ acme_sh_path }}"
+      - --install-cert
+      - -d
+      - "{{ mx1_fqdn }}"
+      - --cert-file
+      - "/etc/ssl/acme/{{ mx1_fqdn }}.cert"
+      - --key-file
+      - "/etc/ssl/acme/{{ mx1_fqdn }}.key"
+      - --fullchain-file
+      - "/etc/ssl/acme/{{ mx1_fqdn }}.fullchain"
+  environment:
+    HOME: "{{ acme_home }}"
+  register: acme_install_result
+  changed_when: true
+
+- name: Zet rechten op private key
+  ansible.builtin.file:
+    path: "/etc/ssl/acme/{{ mx1_fqdn }}.key"
+    owner: root
+    group: root
+    mode: "0600"
+
+- name: Zet rechten op certificaatbestanden
+  ansible.builtin.file:
+    path: "{{ item }}"
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - "/etc/ssl/acme/{{ mx1_fqdn }}.cert"
+    - "/etc/ssl/acme/{{ mx1_fqdn }}.fullchain"
