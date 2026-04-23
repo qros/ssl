@@ -1,0 +1,11 @@
+# algemene rommel
+*.log
+.DS_Store
+
+# env / secrets
+.env
+*.key
+
+# build artifacts
+dist/
+build/
